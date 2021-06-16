@@ -29,5 +29,12 @@ class CuentaTest {
         assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0);
     }
 
+    @Test
+    void testReferenciaCuenta() {
+        var cuenta = new Cuenta("Jhon Doe", new BigDecimal("8900.9997"));
+        var cuenta2 = new Cuenta("Jhon Doe", new BigDecimal("8900.9997"));
 
+//        assertNotEquals(cuenta2, cuenta);
+        assertEquals(cuenta2, cuenta); // No son iguales por que tiene otro puntero a la memoria, pero si se agrega el metodo equals ya son iguales
+    }
 }
