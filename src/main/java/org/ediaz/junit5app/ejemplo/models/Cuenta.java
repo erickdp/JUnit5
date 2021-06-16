@@ -29,11 +29,11 @@ public class Cuenta {
     }
 
     public void debito(BigDecimal monto) {
-        
+        this.saldo = this.saldo.subtract(monto);
     }
 
     public void credito(BigDecimal monto) {
-        
+        this.saldo = this.saldo.add(monto);
     }
 
     @Override

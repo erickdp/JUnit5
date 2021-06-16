@@ -46,7 +46,7 @@ class CuentaTest {
         cuenta.debito(new BigDecimal(100));
         assertNotNull(cuenta.getSaldo());
         assertEquals(900, cuenta.getSaldo().intValue());
-        assertEquals("1000.12345", cuenta.getSaldo().toPlainString());
+        assertEquals("900.12345", cuenta.getSaldo().toPlainString());
     }
 
     @Test
