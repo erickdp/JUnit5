@@ -102,7 +102,9 @@ class CuentaTest {
         assertAll(
                 () -> assertEquals("1000.8989", cuenta2.getSaldo().toPlainString()), // Si la prueba es mas de una linea se usa {}
                 () -> assertEquals("3000", cuenta1.getSaldo().toPlainString()),
-                () -> assertEquals(2, banco.getCuentas().size()),
+                () -> assertEquals(2, banco.getCuentas().size(),
+                        () -> "El numero de cuentas en el banco no es el esperado"),
+                // Se pueden pasar mensajes y seran construcciones futuras que solo se crean el String si falla el test, esto es para mejorar el rendimiento
                 () -> assertEquals("Banco de Quito", cuenta1.getBanco().getNombre()),
                 () -> assertEquals("Andres", banco.getCuentas().stream()
                         .filter(c -> c.getPersona().equals("Andres")) // filtro la lista hasta encontrar Andres
