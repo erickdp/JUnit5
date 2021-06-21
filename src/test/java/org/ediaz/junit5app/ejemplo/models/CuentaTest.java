@@ -98,24 +98,16 @@ class CuentaTest {
         banco.setNombre("Banco de Quito");
         banco.transferir(cuenta2, cuenta1, new BigDecimal("500"));
 
-        assertEquals("1000.8989", cuenta2.getSaldo().toPlainString());
-        assertEquals("3000", cuenta1.getSaldo().toPlainString());
-
-        assertEquals(2, banco.getCuentas().size());
-        assertEquals("Banco de Quito", cuenta1.getBanco().getNombre());
-//        Primer forma
-        assertEquals("Andres", banco.getCuentas().stream()
-                .filter(c -> c.getPersona().equals("Andres")) // filtro la lista hasta encontrar Andres
-                .findFirst() // Escogo el primero que tenga Andres
-                .get().getPersona()); // Y devuelvo a la persona
-//        Segunda fomra
-        assertTrue(banco.getCuentas().stream()
-                .filter(c -> c.getPersona().equals("Andres")) // filtro la lista hasta encontrar Andres
-                .findFirst()
-                .isPresent());
-//        Tercera forma
-        assertTrue(banco.getCuentas().stream()
-                .anyMatch(c -> c.getPersona().equals("Andres"))); // Busca algun match igual a Andres
+//        Si existe fallo en mas de un assert solo se mostrara el primero y los otros no. La solucion es usar assertAll
+        assertAll(
+                () -> assertEquals("1000.8989", cuenta2.getSaldo().toPlainString()), // Si la prueba es mas de una linea se usa {}
+                () -> assertEquals("3000", cuenta1.getSaldo().toPlainString()),
+                () -> assertEquals(2, banco.getCuentas().size()),
+                () -> assertEquals("Banco de Quito", cuenta1.getBanco().getNombre()),
+                () -> assertEquals("Andres", banco.getCuentas().stream()
+                        .filter(c -> c.getPersona().equals("Andres")) // filtro la lista hasta encontrar Andres
+                        .findFirst() // Escogo el primero que tenga Andres
+                        .get().getPersona()));
     }
 
 
