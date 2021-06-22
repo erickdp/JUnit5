@@ -2,6 +2,8 @@ package org.ediaz.junit5app.ejemplo.models;
 
 import org.ediaz.junit5app.ejemplo.exceptions.DineroInsuficienteException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.shadow.com.univocity.parsers.conversions.BigDecimalConversion;
 
@@ -15,7 +17,10 @@ class CuentaTest {
 //    El ciclo de vida es que se crea una insstancia de la clase para cada test
 
     @Test
+    @DisplayName("Probando nombre de la cuenta corriente") // Esta anotacion sirve para dar nombre descriptivo al test
+    @Disabled // Esta anotacion sirve para saltar las pruebas
     void testNombreCuenta() {
+//        fail(); Intenciona el fallo
         var cuenta = new Cuenta("Erick", new BigDecimal(1000.12345));
 //        cuenta.setPersona("Erick");
         var esperado = "Erick";
@@ -26,6 +31,7 @@ class CuentaTest {
     }
 
     @Test
+    @DisplayName("probando el saldo de la cuenta corriente, que no sea null, mayor que cero, valor esperado")
     void testSaldoCuenta() {
         var cuenta = new Cuenta("Erick", new BigDecimal("1000.12345")); // Se puede usar solo new Cuenta y luego CTRL + ALT + V para generar codigo
         assertNotNull(cuenta.getSaldo());
@@ -35,6 +41,7 @@ class CuentaTest {
     }
 
     @Test
+    @DisplayName("testeando referencias que sean iguales con el metodo equals")
     void testReferenciaCuenta() {
         var cuenta = new Cuenta("Jhon Doe", new BigDecimal("8900.9997"));
         var cuenta2 = new Cuenta("Jhon Doe", new BigDecimal("8900.9997"));
@@ -68,7 +75,7 @@ class CuentaTest {
             cuenta.debito(new BigDecimal(1500));
         }); // Si se especifica aqui otra excepcion el test va a fallat porque la que se lanza es DineroInsuficienteException
         var mensaje = excepcion.getMessage();
-        var esperado = "Dinero insuficiente";
+        var esperado = "Dinero Insuficiente";
         assertEquals(esperado, mensaje);
     }
 
@@ -86,6 +93,7 @@ class CuentaTest {
     }
 
     @Test
+    @DisplayName("probando relacion entre las cuentas y el banco con assertAll")
     void testRelacioneBancoCuentas() {
         var cuenta1 = new Cuenta("Jhon Doe", new BigDecimal("2500"));
         var cuenta2 = new Cuenta("Andres", new BigDecimal("1500.8989"));

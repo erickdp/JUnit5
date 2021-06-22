@@ -1,5 +1,7 @@
 package org.ediaz.junit5app.ejemplo.models;
 
+import org.ediaz.junit5app.ejemplo.exceptions.DineroInsuficienteException;
+
 import java.math.BigDecimal;
 
 public class Cuenta {
@@ -38,6 +40,9 @@ public class Cuenta {
     }
 
     public void debito(BigDecimal monto) {
+        if(this.saldo.compareTo(monto) < 1) {
+            throw new DineroInsuficienteException("Dinero Insuficiente");
+        }
         this.saldo = this.saldo.subtract(monto);
     }
 
