@@ -1,10 +1,7 @@
 package org.ediaz.junit5app.ejemplo.models;
 
 import org.ediaz.junit5app.ejemplo.exceptions.DineroInsuficienteException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.shadow.com.univocity.parsers.conversions.BigDecimalConversion;
 
 import java.math.BigDecimal;
@@ -14,14 +11,28 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CuentaTest {
 
-//    El ciclo de vida es que se crea una insstancia de la clase para cada test
+    Cuenta cuenta; // Esta variable no guarda estado, se crea una nueva para cada test
+
+    //    Este metodo con esta anotacion se ejecuta antes de cada instancia de test
+    @BeforeEach
+    void initMethod() {
+        this.cuenta = new Cuenta("Erick", new BigDecimal("1000.12345")); // El objetivo es tomar valores comunes y obtener codigo mas limpio
+        System.out.println("Iniciado el metodo.");
+    }
+
+    @AfterEach
+    void tearDown() {
+        System.out.println("Terminando el metodo de prueba");
+    }
+
+    //    El ciclo de vida es que se crea una insstancia de la clase para cada test
 
     @Test
     @DisplayName("Probando nombre de la cuenta corriente") // Esta anotacion sirve para dar nombre descriptivo al test
-    @Disabled // Esta anotacion sirve para saltar las pruebas
+    @Disabled
+        // Esta anotacion sirve para saltar las pruebas
     void testNombreCuenta() {
 //        fail(); Intenciona el fallo
-        var cuenta = new Cuenta("Erick", new BigDecimal(1000.12345));
 //        cuenta.setPersona("Erick");
         var esperado = "Erick";
         var real = cuenta.getPersona();
@@ -33,7 +44,7 @@ class CuentaTest {
     @Test
     @DisplayName("probando el saldo de la cuenta corriente, que no sea null, mayor que cero, valor esperado")
     void testSaldoCuenta() {
-        var cuenta = new Cuenta("Erick", new BigDecimal("1000.12345")); // Se puede usar solo new Cuenta y luego CTRL + ALT + V para generar codigo
+//        var cuenta = new Cuenta("Erick", new BigDecimal("1000.12345")); // Se puede usar solo new Cuenta y luego CTRL + ALT + V para generar codigo
         assertNotNull(cuenta.getSaldo());
         assertEquals(1000.12345, cuenta.getSaldo().doubleValue());
         assertFalse(cuenta.getSaldo().compareTo(BigDecimal.ZERO) < 0); // Si saldo es menor a 0 devuelve -1 si es mayor 1 y si son iguales 0
@@ -52,7 +63,7 @@ class CuentaTest {
 
     @Test
     void testDebitoCuenta() {
-        var cuenta = new Cuenta("Andres", new BigDecimal("1000.12345"));
+//        var cuenta = new Cuenta("Andres", new BigDecimal("1000.12345"));
         cuenta.debito(new BigDecimal(100)); // De igual manera si se lanza una excepcion las pruebas de abajo no se ejecutan
         assertNotNull(cuenta.getSaldo());
         assertEquals(900, cuenta.getSaldo().intValue());
@@ -61,7 +72,7 @@ class CuentaTest {
 
     @Test
     void testCreditoCuenta() {
-        var cuenta = new Cuenta("Andres", new BigDecimal("1000.12345"));
+//        var cuenta = new Cuenta("Andres", new BigDecimal("1000.12345"));
         cuenta.credito(new BigDecimal(100));
         assertNotNull(cuenta.getSaldo());
         assertEquals(1100, cuenta.getSaldo().intValue());
@@ -70,7 +81,7 @@ class CuentaTest {
 
     @Test
     void testDineroInsuficienteException() {
-        var cuenta = new Cuenta("Erick", new BigDecimal("1000.12345"));
+//        var cuenta = new Cuenta("Erick", new BigDecimal("1000.12345"));
         var excepcion = assertThrows(DineroInsuficienteException.class, () -> {
             cuenta.debito(new BigDecimal(1500));
         }); // Si se especifica aqui otra excepcion el test va a fallat porque la que se lanza es DineroInsuficienteException
@@ -93,6 +104,7 @@ class CuentaTest {
     }
 
     @Test
+    @Disabled
     @DisplayName("probando relacion entre las cuentas y el banco con assertAll")
     void testRelacioneBancoCuentas() {
         var cuenta1 = new Cuenta("Jhon Doe", new BigDecimal("2500"));
