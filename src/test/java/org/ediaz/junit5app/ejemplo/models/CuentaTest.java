@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+//@TestInstance(TestInstance.Lifecycle.PER_CLASS) // No es recomendable usar esta anotacion pues solo se crea un instancia
 class CuentaTest {
 
     Cuenta cuenta; // Esta variable no guarda estado, se crea una nueva para cada test
@@ -25,8 +26,18 @@ class CuentaTest {
         System.out.println("Terminando el metodo de prueba");
     }
 
-    //    El ciclo de vida es que se crea una insstancia de la clase para cada test
+//    Se ejecuta este metodo antes de la instancia de la clase por eso es estatico
+    @BeforeAll
+    static void beforeAll() {
+        System.out.println("Inicializando la clase de prueba");
+    }
 
+    @AfterAll
+    static void afterAll() {
+        System.out.println("Finalizando la clase de prueba");
+    }
+
+    //    El ciclo de vida es que se crea una insstancia de la clase para cada test
     @Test
     @DisplayName("Probando nombre de la cuenta corriente") // Esta anotacion sirve para dar nombre descriptivo al test
     @Disabled
@@ -131,6 +142,4 @@ class CuentaTest {
                         .findFirst() // Escogo el primero que tenga Andres
                         .get().getPersona()));
     }
-
-
 }
