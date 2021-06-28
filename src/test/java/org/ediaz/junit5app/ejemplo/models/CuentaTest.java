@@ -2,10 +2,12 @@ package org.ediaz.junit5app.ejemplo.models;
 
 import org.ediaz.junit5app.ejemplo.exceptions.DineroInsuficienteException;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.*;
 import org.junit.jupiter.params.shadow.com.univocity.parsers.conversions.BigDecimalConversion;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -141,5 +143,56 @@ class CuentaTest {
                         .filter(c -> c.getPersona().equals("Andres")) // filtro la lista hasta encontrar Andres
                         .findFirst() // Escogo el primero que tenga Andres
                         .get().getPersona()));
+    }
+
+//    Se utiliza anotaciones para definir si los metodos se ejecutan si cumple una propiedad como por ejemplo tipo de SO, arquitectura, etc.
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void testSoloWindows() {
+    }
+
+    @Test
+    @EnabledOnOs({OS.LINUX, OS.MAC})
+    void testSoloLinuxYMac() {
+    }
+    
+//    Si tiene un jdk diferente
+
+
+    @Test
+    @EnabledOnJre(JRE.JAVA_11)
+    void testJRE11() {
+    }
+
+    @Test
+    @DisabledOnJre(JRE.JAVA_16)
+    void testNOJRE15() {
+    }
+
+    @Test
+    @EnabledIfSystemProperty(named = "java.version", matches = "1.8.0")
+    void testJavaVersion() {
+    }
+
+    @Test
+    @EnabledIfSystemProperty(named = "user.name", matches = "peddoooo")
+    void testUsuario() {
+    }
+
+    @Test
+    @EnabledIfSystemProperty(named = "os.arch", matches = ".*64.*")
+    void testArquitectura() {
+    }
+
+    @Test
+    @EnabledIfSystemProperty(named = "ENV", matches = "dev")
+    void testDev() {
+    }
+
+    @Test
+    void imprimirSystemProperties() {
+        var properties = System.getProperties();
+        properties.forEach((k,v) -> System.out.println(k + ":" + v));
     }
 }
