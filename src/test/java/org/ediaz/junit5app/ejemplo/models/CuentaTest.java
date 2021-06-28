@@ -7,6 +7,7 @@ import org.junit.jupiter.params.shadow.com.univocity.parsers.conversions.BigDeci
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,7 +29,7 @@ class CuentaTest {
         System.out.println("Terminando el metodo de prueba");
     }
 
-//    Se ejecuta este metodo antes de la instancia de la clase por eso es estatico
+    //    Se ejecuta este metodo antes de la instancia de la clase por eso es estatico
     @BeforeAll
     static void beforeAll() {
         System.out.println("Inicializando la clase de prueba");
@@ -43,7 +44,7 @@ class CuentaTest {
     @Test
     @DisplayName("Probando nombre de la cuenta corriente") // Esta anotacion sirve para dar nombre descriptivo al test
     @Disabled
-        // Esta anotacion sirve para saltar las pruebas
+    // Esta anotacion sirve para saltar las pruebas
     void testNombreCuenta() {
 //        fail(); Intenciona el fallo
 //        cuenta.setPersona("Erick");
@@ -156,7 +157,7 @@ class CuentaTest {
     @EnabledOnOs({OS.LINUX, OS.MAC})
     void testSoloLinuxYMac() {
     }
-    
+
 //    Si tiene un jdk diferente
 
 
@@ -193,6 +194,17 @@ class CuentaTest {
     @Test
     void imprimirSystemProperties() {
         var properties = System.getProperties();
-        properties.forEach((k,v) -> System.out.println(k + ":" + v));
+        properties.forEach((k, v) -> System.out.println(k + ":" + v));
+    }
+
+    @Test
+    void imprimirVariablesEntorno() {
+        var getenv = System.getenv();
+        getenv.forEach((k, v) -> System.out.println(k + ":" + v));
+    }
+
+    @Test
+    @EnabledIfEnvironmentVariable(named = "COMPUTERNAME", matches = "ASUS")
+    void testNombrePC() {
     }
 }
