@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.*;
 
 //@TestInstance(TestInstance.Lifecycle.PER_CLASS) // No es recomendable usar esta anotacion pues solo se crea un instancia
 class CuentaTest {
@@ -207,4 +208,28 @@ class CuentaTest {
     @EnabledIfEnvironmentVariable(named = "COMPUTERNAME", matches = "ASUS")
     void testNombrePC() {
     }
+
+//    Uso de assumptions para validar si dentro de un metodo se cumple una condicion
+
+    @Test
+    void testSaldoCuentaAssumption() {
+        var badera = "dev".equals(System.getProperty("ENV"));
+        assumeTrue(badera); // Si es verdadero este assume entonces ejecuta lo demas
+        assertNotNull(cuenta.getSaldo());
+        assertEquals(1000.12345, cuenta.getSaldo().doubleValue());
+        assertFalse(cuenta.getSaldo().compareTo(BigDecimal.ZERO) < 0); // Si saldo es menor a 0 devuelve -1 si es mayor 1 y si son iguales 0
+        assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0);
+    }
+
+    //    Para ejecutar solo un bloque de codigo se usa assumingThat
+    @Test
+    void testSaldoCuentaAssuming() {
+        assumingThat("emp".equals(System.getProperty("ENV")), () -> { // Este bloque no se ejecuta porque ENV no es emp sino dev
+            assertNotNull(cuenta.getSaldo());
+            assertEquals(1000.123456, cuenta.getSaldo().doubleValue()); // Si entra aqui deberia fallar
+        });
+        assertFalse(cuenta.getSaldo().compareTo(BigDecimal.ZERO) < 0); // Si saldo es menor a 0 devuelve -1 si es mayor 1 y si son iguales 0
+        assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0);
+    }
+
 }
