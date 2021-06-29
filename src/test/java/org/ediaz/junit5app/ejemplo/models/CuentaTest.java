@@ -3,15 +3,20 @@ package org.ediaz.junit5app.ejemplo.models;
 import org.ediaz.junit5app.ejemplo.exceptions.DineroInsuficienteException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
-import org.junit.jupiter.params.shadow.com.univocity.parsers.conversions.BigDecimalConversion;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Properties;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assumptions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.junit.jupiter.api.Assumptions.assumingThat;
 
 //@TestInstance(TestInstance.Lifecycle.PER_CLASS) // No es recomendable usar esta anotacion pues solo se crea un instancia
 class CuentaTest {
@@ -19,6 +24,7 @@ class CuentaTest {
 //    Ctrl + Shift + F10 dentro de un metodo permite ejecutar solo ese test
 //    Ctrl + Shift + F10 fuera de un metodo permite ejecutar todos los test
 //    Shift + F5 permite ejecutar nuevamente todos los test ya ejecutados
+//    Ctrl + alt + o quitar imports no necesarios
 
     Cuenta cuenta; // Esta variable no guarda estado, se crea una nueva para cada test
 
@@ -112,9 +118,7 @@ class CuentaTest {
         @Test
         void testDineroInsuficienteException() {
 //        var cuenta = new Cuenta("Erick", new BigDecimal("1000.12345"));
-            var excepcion = assertThrows(DineroInsuficienteException.class, () -> {
-                cuenta.debito(new BigDecimal(1500));
-            }); // Si se especifica aqui otra excepcion el test va a fallat porque la que se lanza es DineroInsuficienteException
+            var excepcion = assertThrows(DineroInsuficienteException.class, () -> cuenta.debito(new BigDecimal(1500))); // Si se especifica aqui otra excepcion el test va a fallat porque la que se lanza es DineroInsuficienteException
             var mensaje = excepcion.getMessage();
             var esperado = "Dinero Insuficiente";
             assertEquals(esperado, mensaje);
@@ -265,9 +269,10 @@ class CuentaTest {
 
     //    Repeticion de pruebas con @RepeatedTest
     @DisplayName("Repeticion del metodo test Debito Cuenta")
-    @RepeatedTest(value = 5, name = "{displayName} Repeticion actual : {currentRepetition} de : {totalRepetition}") // Puedo usar un mensaje personalizado y el numero y total de repeticiones accediendo con las {}
+    @RepeatedTest(value = 5, name = "{displayName} Repeticion actual : {currentRepetition} de : {totalRepetitions}")
+    // Puedo usar un mensaje personalizado y el numero y total de repeticiones accediendo con las {}
     void testDebitoCuentaRep(RepetitionInfo info) { // Este argumento es para usar las variables de repeticion
-        if(info.getCurrentRepetition() == 3) {
+        if (info.getCurrentRepetition() == 3) {
             System.out.println("Estamos en la repeticion " + info.getCurrentRepetition());
         }
         cuenta.debito(new BigDecimal(100));
@@ -275,4 +280,69 @@ class CuentaTest {
         assertEquals(900, cuenta.getSaldo().intValue());
         assertEquals("900.12345", cuenta.getSaldo().toPlainString());
     }
+
+    @Nested
+    class parametriezTests {
+
+        //    Test parametrizados con @ParametrizedTest, con esto se puede ejecutar varios escenarios en un solo metodo test
+        @ParameterizedTest(name = "Preuba {index} donde se tiene el parametro: {0} - {argumentsWithNames}")
+        // Manda a consola mensaje persoanlizado
+        @ValueSource(strings = {"100", "200", "300", "400", "1000.12345"})
+        // index es el numero de parametro mientras 0 o arguments... es el valor
+        void testDebitoCuentaParametrizado(String monto) { // Se debe de pasar el mismo tipo de dato definido en value sources
+            cuenta.debito(new BigDecimal(monto));
+            assertNotNull(cuenta.getSaldo());
+            assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0);
+        }
+
+        @ParameterizedTest(name = "Preuba {index} donde se tiene el parametro: {0} - {argumentsWithNames}")
+        @CsvSource({"1,100", "2,200", "3,300"})
+            // Uso de valores separado por comas
+        void testDebitoCuentaCscSource(String index, String monto) {
+            System.out.println("indice ".concat(index).concat(" : valor ").concat(monto));
+            cuenta.debito(new BigDecimal(monto));
+            assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0);
+        }
+
+        @ParameterizedTest(name = "Preuba {index} donde se tiene el parametro: {0} - {argumentsWithNames}")
+        @CsvSource({"1,100,100,Erick,Erick", "2,200,200,omar,Omar", "3,300,200,Maria,Maria"})
+            // Uso de valores separado por comas
+        void testDebitoCuentaCscSource2(String index, String saldo, String monto, String actual, String esperado) {
+            cuenta.setPersona(actual);
+            cuenta.setSaldo(new BigDecimal(saldo));
+            cuenta.debito(new BigDecimal(monto));
+            assertEquals(esperado, cuenta.getPersona());
+            assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0);
+        }
+
+        @ParameterizedTest(name = "Preuba {index} donde se tiene el parametro: {0} - {argumentsWithNames}")
+        @CsvFileSource(resources = "/data.csv")
+            // Uso de archivos csv que deben de estar en resources
+        void testDebitoCuentaCscSource(String monto) {
+            cuenta.debito(new BigDecimal(monto));
+            assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0);
+        }
+
+        @ParameterizedTest(name = "Preuba {index} donde se tiene el parametro: {0} - {argumentsWithNames}")
+        @CsvFileSource(resources = "/data2.csv")
+            // Uso de archivos csv que deben de estar en resources
+        void testDebitoCuentaCscSource2(String index, String monto) {
+            System.out.println(index.concat(" -> ").concat(monto));
+            cuenta.debito(new BigDecimal(monto));
+            assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0);
+        }
+
+        @ParameterizedTest(name = "Preuba {index} donde se tiene el parametro: {0} - {argumentsWithNames}")
+        @MethodSource("montoList")
+            // Uso de metodos para que sean pasados como argumento, solo defino el nombre aqui
+        void testDebitoCuentaMethodSource(String monto) {
+            cuenta.debito(new BigDecimal(monto));
+            assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0);
+        }
+
+        static List<String> montoList() { // El metodo debe de ser estatico para ser usado como argumento
+            return Arrays.asList("100", "200", "300");
+        }
+    }
+
 }

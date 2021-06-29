@@ -40,7 +40,7 @@ public class Cuenta {
     }
 
     public void debito(BigDecimal monto) {
-        if(this.saldo.compareTo(monto) < 1) {
+        if(this.saldo.compareTo(monto) < 0) {
             throw new DineroInsuficienteException("Dinero Insuficiente");
         }
         this.saldo = this.saldo.subtract(monto);
