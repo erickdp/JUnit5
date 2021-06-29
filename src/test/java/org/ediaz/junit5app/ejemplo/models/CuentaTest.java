@@ -16,6 +16,10 @@ import static org.junit.jupiter.api.Assumptions.*;
 //@TestInstance(TestInstance.Lifecycle.PER_CLASS) // No es recomendable usar esta anotacion pues solo se crea un instancia
 class CuentaTest {
 
+//    Ctrl + Shift + F10 dentro de un metodo permite ejecutar solo ese test
+//    Ctrl + Shift + F10 fuera de un metodo permite ejecutar todos los test
+//    Shift + F5 permite ejecutar nuevamente todos los test ya ejecutados
+
     Cuenta cuenta; // Esta variable no guarda estado, se crea una nueva para cada test
 
     //    Este metodo con esta anotacion se ejecuta antes de cada instancia de test
@@ -259,4 +263,16 @@ class CuentaTest {
         assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0);
     }
 
+    //    Repeticion de pruebas con @RepeatedTest
+    @DisplayName("Repeticion del metodo test Debito Cuenta")
+    @RepeatedTest(value = 5, name = "{displayName} Repeticion actual : {currentRepetition} de : {totalRepetition}") // Puedo usar un mensaje personalizado y el numero y total de repeticiones accediendo con las {}
+    void testDebitoCuentaRep(RepetitionInfo info) { // Este argumento es para usar las variables de repeticion
+        if(info.getCurrentRepetition() == 3) {
+            System.out.println("Estamos en la repeticion " + info.getCurrentRepetition());
+        }
+        cuenta.debito(new BigDecimal(100));
+        assertNotNull(cuenta.getSaldo());
+        assertEquals(900, cuenta.getSaldo().intValue());
+        assertEquals("900.12345", cuenta.getSaldo().toPlainString());
+    }
 }
