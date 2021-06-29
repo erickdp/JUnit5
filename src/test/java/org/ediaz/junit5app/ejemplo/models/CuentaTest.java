@@ -281,8 +281,13 @@ class CuentaTest {
         assertEquals("900.12345", cuenta.getSaldo().toPlainString());
     }
 
+    // Tambien se pueden usar tags para solo ejecutar pruebas que tengan sean del grupo de estos tags
+    // En la seccion de edit configurations alado de ejecutar, en lugar de class se cambia a tags y se escribe cuales tags
+    // Los tags en clases se aplican a todos los metodos pero tambien se puede hacer individual para cada test
+    // Un test puede tener varios tags
+    @Tag("parametrizadas")
     @Nested
-    class parametriezTests {
+    class parametrizedTests {
 
         //    Test parametrizados con @ParametrizedTest, con esto se puede ejecutar varios escenarios en un solo metodo test
         @ParameterizedTest(name = "Preuba {index} donde se tiene el parametro: {0} - {argumentsWithNames}")
