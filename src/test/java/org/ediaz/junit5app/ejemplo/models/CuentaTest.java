@@ -10,9 +10,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
+import java.sql.Time;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
@@ -30,7 +33,8 @@ class CuentaTest {
 
     private TestInfo testInfo;
     private TestReporter testReporter;
-//    Uso de inyeccion de dependencias con testInfo y testReporter para visualizar algunos parametros de los test
+
+    //    Uso de inyeccion de dependencias con testInfo y testReporter para visualizar algunos parametros de los test
 //    El testInfo y testReporter se lo puede hacer por cada metodo enviando los argumentos, esta vez se lo hacer para
 //    todos los metodos por lo que es necesario ponerlos en el beforeEach
     //    Este metodo con esta anotacion se ejecuta antes de cada instancia de test
@@ -75,7 +79,7 @@ class CuentaTest {
         // Esta anotacion sirve para saltar las pruebas
         void testNombreCuenta() {
 //            System.out.println(testInfo.getTags()); // Ademas del publishEntry puede salir por la consola estandar
-            if(testInfo.getTags().contains("nombree")) {
+            if (testInfo.getTags().contains("nombree")) {
                 testReporter.publishEntry("Se encuentra en el test con tag nombre");
             }
 //        fail(); Intenciona el fallo
@@ -361,6 +365,34 @@ class CuentaTest {
 
         static List<String> montoList() { // El metodo debe de ser estatico para ser usado como argumento
             return Arrays.asList("100", "200", "300");
+        }
+    }
+
+    //    Se puede simular procesamiento pesado para que sea controlado y no se ejecute por diferentes circunsatncias
+    @Nested
+    @Tag("timeOut")
+    class TimeOutTes {
+
+        @Test
+        @Timeout(5)
+            // Por defaul se define el tiempo de espera en seg
+        void timeOut() throws InterruptedException {
+            TimeUnit.SECONDS.sleep(6); // Simula que es un proceso que tarda 6 seg en completarse
+        }
+
+        @Test
+        @Timeout(value = 2, unit = TimeUnit.MILLISECONDS)
+            // Se puede cambiar la configuracion del tiempo
+        void timeOut2() throws InterruptedException {
+            TimeUnit.MILLISECONDS.sleep(2100);
+        }
+
+        // Tambien se usa assertions para definir un timeOut
+        @Test
+        void timeOutAssertions() {
+            assertTimeout(Duration.ofSeconds(3), ()->{
+                TimeUnit.MILLISECONDS.sleep(2000);
+            });
         }
     }
 
