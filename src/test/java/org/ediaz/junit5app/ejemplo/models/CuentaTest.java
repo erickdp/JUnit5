@@ -303,7 +303,7 @@ class CuentaTest {
     // En la seccion de edit configurations alado de ejecutar, en lugar de class se cambia a tags y se escribe cuales tags
     // Los tags en clases se aplican a todos los metodos pero tambien se puede hacer individual para cada test
     // Un test puede tener varios tags
-    @Tag("parametrizadas")
+    @Tag("parametrizadas-miTag")
     @Nested
     class parametrizedTests {
 
@@ -370,7 +370,7 @@ class CuentaTest {
 
     //    Se puede simular procesamiento pesado para que sea controlado y no se ejecute por diferentes circunsatncias
     @Nested
-    @Tag("timeOut")
+    @Tag("timeOut-miTag")
     class TimeOutTes {
 
         @Test
