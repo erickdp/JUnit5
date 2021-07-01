@@ -28,9 +28,18 @@ class CuentaTest {
 
     Cuenta cuenta; // Esta variable no guarda estado, se crea una nueva para cada test
 
+    private TestInfo testInfo;
+    private TestReporter testReporter;
+//    Uso de inyeccion de dependencias con testInfo y testReporter para visualizar algunos parametros de los test
+//    El testInfo y testReporter se lo puede hacer por cada metodo enviando los argumentos, esta vez se lo hacer para
+//    todos los metodos por lo que es necesario ponerlos en el beforeEach
     //    Este metodo con esta anotacion se ejecuta antes de cada instancia de test
     @BeforeEach
-    void initMethod() {
+    void initMethod(TestInfo testInfo, TestReporter testReporter) {
+        this.testInfo = testInfo; // Se inyecta para cada metodo de esta manera
+        this.testReporter = testReporter;
+//        get name al final es solo para que me muestre el metodo resumido sin todos los paquetes
+        testReporter.publishEntry("ejecutando: " + testInfo.getDisplayName() + " " + testInfo.getTestMethod().orElse(null).getName());
         this.cuenta = new Cuenta("Erick", new BigDecimal("1000.12345")); // El objetivo es tomar valores comunes y obtener codigo mas limpio
         System.out.println("Iniciado el metodo.");
     }
@@ -59,11 +68,16 @@ class CuentaTest {
 
         //    El ciclo de vida es que se crea una insstancia de la clase para cada test
         @Test
+        @Tag("nombree")
         @DisplayName("Probando nombre de la cuenta corriente")
         // Esta anotacion sirve para dar nombre descriptivo al test
-        @Disabled
+//        @Disabled
         // Esta anotacion sirve para saltar las pruebas
         void testNombreCuenta() {
+//            System.out.println(testInfo.getTags()); // Ademas del publishEntry puede salir por la consola estandar
+            if(testInfo.getTags().contains("nombree")) {
+                testReporter.publishEntry("Se encuentra en el test con tag nombre");
+            }
 //        fail(); Intenciona el fallo
 //        cuenta.setPersona("Erick");
             var esperado = "Erick";
